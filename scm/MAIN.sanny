@@ -81,6 +81,7 @@ write_memory 9067136 size 4 value 536870912 virtual_protect 0
 0173: $PLAYER_ACTOR 94.000
 fade 1 100
 wait 3000
+create_thread @MarkerPC
 end_thread
 
 

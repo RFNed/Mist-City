@@ -1,5 +1,34 @@
 {$USE CLEO}
 
+var
+$CursorEnabled: Integer
+$WindowID: Integer
+end
+
+const
+    WINDOWS_BACKGROUND = 2
+end
+
+const
+    MAIL_ICON = 5
+end
+
+:MarkerPC
+thread 'MarkerPC'
+$CursorEnabled = 1
+$WindowID = WINDOWS_BACKGROUND
+
+:MarkerPCC
+wait 0 ms
+if
+00FF:   actor $PLAYER_ACTOR sphere 0 in_sphere -17.7865 -100.8349 277.3105 radius 1.0 1.0 1.0 on_foot
+then
+    fade 0 1000
+    wait 2000
+    jump @INITPC
+end
+jump @MarkerPCC
+end_thread
 // +30 in prod in y
 
 :INITPC // 1 -> Cursor
@@ -8,7 +37,8 @@ thread 'INITPC'
 :PC
 0390: load_txd_dictionary 'ACHIEV'
 038F: load_texture "ots" as 1
-038F: load_texture "background" as 2
+038F: load_texture "background" as WINDOWS_BACKGROUND
+038f: "MAIL_ICON" as MAIL_ICON
 038F: load_texture "pointer" as 3
 Player.CanMove($PLAYER_CHAR, FALSE)
 var
@@ -28,20 +58,27 @@ while True
     // background
 
     
-    
-    038d: 2 330.0 200.0 550.0 350.0 255 255 255 255
-    
+    if 
+    $WindowID == WINDOWS_BACKGROUND
+    then
+        038d: WINDOWS_BACKGROUND 330.0 200.0 550.0 350.0 255 255 255 255
+        038d: MAIL_ICON 130.0 79.0 45.0 50.0 255 255 255 255
+    end
     // background end
 
     // windows main
     
     
+    
+        
     // end
     
     
 
     // Cursor
-    
+    if
+    $CursorEnabled == 1
+    then    
     0A4A: store_joystick_X_offset_to 0@ Y_offset_to 1@
 
     $Cursor_x += 0@
@@ -52,7 +89,7 @@ while True
     
     0@ = 0.0
     1@ = 0.0
-
+    end
     // cursor border
 
     if
@@ -86,14 +123,17 @@ while True
     $CHitbox_x -= 3.0
     $CHitbox_y -= 5.0
 
-
-    038D: draw_texture 1 position $Cursor_x $Cursor_y size 15.0 16.5 RGBA 255 255 255 255 // Cursor
+    if 
+    $CursorEnabled == 1
+    then
+        038D: draw_texture 1 position $Cursor_x $Cursor_y size 15.0 16.5 RGBA 255 255 255 255 // Cursor
+    end
     // cursor end
-
+    
 
 
     // debug value
-    0AD3: 0@v = string_format "%f %f" $Cursor_x $Cursor_y
+    0AD3: 0@v = string_format "%f %f %d" $Cursor_x $Cursor_y $CursorEnabled
     0ADF: add_text_label "_TEST" text 0@v
     033E: set_draw_text_position 136.0 69.0 GXT '_TEST'
     033F: set_text_draw_letter_size 0.5 1.06
