@@ -1,9 +1,6 @@
 DEFINE MISSIONS 1
 DEFINE MISSION 0 at @INTRO
-//DEFINE MISSION {ID} 0 AT {LABEL} @
-
 DEFINE EXTERNAL_SCRIPTS -1
-
 DEFINE UNKNOWN_EMPTY_SEGMENT 0
 DEFINE UNKNOWN_THREADS_MEMORY 0
 
@@ -25,14 +22,9 @@ fade 0 0
 0A8C: write_memory 12677196 size 1 value 50 virtual_protect 1 // 50 fps
 0997: set_total_respect_points_to 1000
 var
-
-// Computer Section
-
+// Computer Sectionq
 $isPCTurnedOn: int
-
 //
-
-
 end
 fade 0 0 
 write_memory 0x004C3D44 size 4 value 0x004C3CB4 vp true // 
@@ -42,7 +34,6 @@ thread 'MAIN'
 write_memory 0xA9AE54 size 1 value 0 vp true
 01F0: set_max_wanted_level_to 6 
 set_wb_check_to 0 
-
 00C0: set_current_time_hours_to 0 minutes_to 0 
 01B6: set_weather 1
 04E4: unknown_refresh_game_renderer_at 507.4894 -786.8634
@@ -75,17 +66,23 @@ write_memory 9067136 size 4 value 536870912 virtual_protect 0
 0746: set_acquaintance 3 of_actors_pedtype 7 to_actors_pedtype 4 
 01EB: set_traffic_density_multiplier_to 1.0
 03DE: set_pedestrians_density_multiplier_to 1.0
-
 07FB: set_interior 'DYMER_HOUSE' access 1
 07FB: set_interior 'DYMER_HOUSEs' access 1
 0173: $PLAYER_ACTOR 94.000
 fade 1 100
 wait 3000
+
+
+
 end_thread
 
 
 
 
-
+// Features
 {$INCLUDE_ONCE Features\PC} // PC
+{$INCLUDE_ONCE Features\CRITICAL}
+
+
+// Missions
 {$INCLUDE_ONCE Missions\Intro\INTRO} // Intro
