@@ -1,0 +1,21 @@
+{$USE CLEO}
+
+const
+
+    Money = 30
+
+end
+
+:INTRO
+thread 'INTRO'
+if
+wasted_or_busted
+then
+    mission_cleanup
+else
+    mission_cleanup
+end
+$ONMISSION = False
+09B9: show_entered_car_name 0
+09BA: show_entered_zone_name 0
+end_thread

@@ -1,0 +1,109 @@
+{$USE CLEO}
+
+// +30 in prod in y
+
+:INITPC // 1 -> Cursor
+thread 'INITPC'
+
+:PC
+0390: load_txd_dictionary 'ACHIEV'
+038F: load_texture "ots" as 1
+038F: load_texture "background" as 2
+038F: load_texture "pointer" as 3
+Player.CanMove($PLAYER_CHAR, FALSE)
+var
+0@: Float
+1@: Float
+$Cursor_x: Float
+$Cursor_y: Float
+$CHitbox_x: Float
+$CHitbox_y: Float
+end
+$Cursor_x = 330.0
+$Cursor_y = 220.0
+while True
+    wait 0 ms
+
+    
+    // background
+
+    
+    
+    038d: 2 330.0 200.0 550.0 350.0 255 255 255 255
+    
+    // background end
+
+    // windows main
+    
+    
+    // end
+    
+    
+
+    // Cursor
+    
+    0A4A: store_joystick_X_offset_to 0@ Y_offset_to 1@
+
+    $Cursor_x += 0@
+    $Cursor_y -= 1@
+    0086: $CHitbox_x = $Cursor_x
+    0086: $CHitbox_y = $Cursor_y
+    
+    
+    0@ = 0.0
+    1@ = 0.0
+
+    // cursor border
+
+    if
+    $CHitbox_x < 61.0
+    then
+        $Cursor_x = 61.0
+    else
+        if
+        $CHitbox_x > 601.0
+        then
+            $Cursor_x = 601.0
+        end
+    end
+
+    if
+    $CHitbox_y < 30.0
+    then
+        $Cursor_y = 30.0
+    else
+        if
+        $CHitbox_y > 368.0
+        then
+            $Cursor_y = 368.0
+        end
+    end
+
+
+
+    // border end
+
+    $CHitbox_x -= 3.0
+    $CHitbox_y -= 5.0
+
+
+    038D: draw_texture 1 position $Cursor_x $Cursor_y size 15.0 16.5 RGBA 255 255 255 255 // Cursor
+    // cursor end
+
+
+
+    // debug value
+    0AD3: 0@v = string_format "%f %f" $Cursor_x $Cursor_y
+    0ADF: add_text_label "_TEST" text 0@v
+    033E: set_draw_text_position 136.0 69.0 GXT '_TEST'
+    033F: set_text_draw_letter_size 0.5 1.06
+    0344: set_text_draw_linewidth 700.0 for_centered_text
+    0349: set_text_draw_font 1
+    03E0: draw_text_behind_textures 1
+    // end
+    
+    03F0: enable_text_draw 0 
+
+end
+
+end_thread

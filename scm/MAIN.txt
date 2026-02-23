@@ -1,0 +1,91 @@
+DEFINE MISSIONS 1
+DEFINE MISSION 0 at @INTRO
+//DEFINE MISSION {ID} 0 AT {LABEL} @
+
+DEFINE EXTERNAL_SCRIPTS -1
+
+DEFINE UNKNOWN_EMPTY_SEGMENT 0
+DEFINE UNKNOWN_THREADS_MEMORY 0
+
+{$NOSOURCE}
+{$USE newOpcodes}
+{$USE CLEO}
+{$USE CLEO+}
+{$USE ini}
+{$USE FileSystemOperations}
+
+const // Missions
+    INTRO = 0
+end
+
+
+09B9: show_entered_car_name 0
+09BA: show_entered_zone_name 0
+fade 0 0 
+0A8C: write_memory 12677196 size 1 value 50 virtual_protect 1 // 50 fps
+0997: set_total_respect_points_to 1000
+var
+
+// Computer Section
+
+$isPCTurnedOn: int
+
+//
+
+
+end
+fade 0 0 
+write_memory 0x004C3D44 size 4 value 0x004C3CB4 vp true // 
+//0A8C: write_memory 0x53BFB8 size 4 value 0x90909090 virtual_protect 1  //
+//0A8C: write_memory 0x53BFBC size 1 value 0x90 virtual_protect 1  // 
+thread 'MAIN'
+write_memory 0xA9AE54 size 1 value 0 vp true
+01F0: set_max_wanted_level_to 6 
+set_wb_check_to 0 
+
+00C0: set_current_time_hours_to 0 minutes_to 0 
+01B6: set_weather 1
+04E4: unknown_refresh_game_renderer_at 507.4894 -786.8634
+Camera.SetAtPos(507.4894, -786.8634, 15.5945)
+$PLAYER_CHAR = Player.Create(#NULL, 901.4639, -701.5287, 14.0)
+$PLAYER_ACTOR = Actor.EmulateFromPlayer($PLAYER_CHAR)
+07AF: $PLAYER_GROUP = player $PLAYER_CHAR group 
+0173: $PLAYER_ACTOR 94.000
+Camera.SetBehindPlayer()
+wait 0 
+Player.SetClothes($PLAYER_CHAR, "skullyblk", "skullycap" , 16)
+Player.SetClothes($PLAYER_CHAR, "player_face", "HEAD", Head)
+Player.SetClothes($PLAYER_CHAR, "JEANSDENIM", "JEANS", Legs)
+Player.SetClothes($PLAYER_CHAR, "SNEAKERBINCBLK", "SNEAKER", Shoes)
+Player.SetClothes($PLAYER_CHAR, "hoodyAblack", "hoodyA" , Torso)
+Player.Build($PLAYER_CHAR)
+Player.CanMove($PLAYER_CHAR) = True
+0489: set_actor $PLAYER_ACTOR muted 1
+fade 0 0
+select_interior 0
+write_memory 9067136 size 4 value 536870912 virtual_protect 0
+0629: change_integer_stat 181 to 4
+016C: restart_if_wasted_at 582.6622 -470.2378 15.0 angle 268.9447 town_number 0
+016D: restart_if_busted_at 582.6622 -470.2378 15.0 angle 268.9447 town_number 0
+0180: set_on_mission_flag_to $ONMISSION
+03E6: remove_text_box
+0746: set_acquaintance 3 of_actors_pedtype 7 to_actors_pedtype 0
+0746: set_acquaintance 3 of_actors_pedtype 7 to_actors_pedtype 8
+0746: set_acquaintance 3 of_actors_pedtype 7 to_actors_pedtype 23
+0746: set_acquaintance 3 of_actors_pedtype 7 to_actors_pedtype 4 
+01EB: set_traffic_density_multiplier_to 1.0
+03DE: set_pedestrians_density_multiplier_to 1.0
+
+07FB: set_interior 'DYMER_HOUSE' access 1
+07FB: set_interior 'DYMER_HOUSEs' access 1
+0173: $PLAYER_ACTOR 94.000
+fade 1 100
+wait 3000
+end_thread
+
+
+
+
+
+{$INCLUDE_ONCE Features\PC} // PC
+{$INCLUDE_ONCE Missions\Intro\INTRO} // Intro
