@@ -1,3 +1,5 @@
 .vscode/
 **/.vs/
+**/obj/
+**/bin/
 scm/script.img
