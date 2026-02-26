@@ -34,6 +34,36 @@ struct AchievementOption
                 bInited = true;
             }
         };
+        Events::gameProcessEvent += [this]() {
+            Test();
+        };
+    }
+
+    void Test() {
+        if (isDone == false) {
+            int var = GetSCMGlobal(6);
+            __try {
+                int value = var;
+                char buffer[64];
+                sprintf_s(buffer, "is %d", value);
+                if (value != 17) {
+                    CMessages::AddMessageJumpQ(buffer, 100, 1);
+                } else {
+                    MessageBox(
+                        NULL,
+                        "OK",
+                        "OK",
+                        MB_CANCELTRYCONTINUE | MB_ICONQUESTION
+                    );
+                    isDone = true;
+                    CMessages::AddBigMessage("yoyoyo", 5000, 1);
+                    CMessages::AddMessageJumpQ("its Done! Thank you!!!", 5000, 1);
+                }
+            }
+            __except (EXCEPTION_EXECUTE_HANDLER) {
+                CMessages::AddMessageJumpQ("SCMGlobal access violation", 100, 1);
+            }
+        }
     }
 
     void SetupNewPage() {
