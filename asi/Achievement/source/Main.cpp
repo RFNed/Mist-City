@@ -25,25 +25,37 @@ int GetSCMGlobal(int index) {
 struct AchievementOption
 {
     bool bInited = false;
-    static CSprite2d ach_car;
+
+    // Achievements TXD
+
+    static CSprite2d achno; // Non-exist achievement
+    static CSprite2d achcar; // Achievement car
+
+
+    //
+
     AchievementOption()
     {
         Events::initRwEvent += [this](){
             if (!bInited) {
+                bInited = true;
                 SetupNewPage();
                 InitPage();
 
-                int ach_txd = CTxdStore::AddTxdSlot("ach_txd");
-
-                CTxdStore::LoadTxd(ach_txd, "MODELS\\ACHV.TXD");
-                CTxdStore::AddRef(ach_txd);
+                int txd = CTxdStore::AddTxdSlot("ach_txd");
+                CTxdStore::LoadTxd(txd, "MODELS\\TXD\\ACHV.TXD");
+                CTxdStore::AddRef(txd);
                 CTxdStore::PushCurrentTxd();
-                CTxdStore::SetCurrentTxd(ach_txd);
+
+                CTxdStore::SetCurrentTxd(txd);
                 
-                ach_car.SetTexture("ach1", NULL);
+                
+
+                achno.SetTexture(const_cast<char*>("ach_no"));
+                
                 CTxdStore::PopCurrentTxd();
 
-                bInited = true;
+
             }
         };
         Events::menuDrawingEvent += [this]() {
@@ -51,14 +63,17 @@ struct AchievementOption
         };
 
         Events::shutdownRwEvent += [] {
-            ach_car.Delete();
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
-        }
+        };
 
     }
 
     void RenderAchievements() {
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
+            float oldZ = CSprite2d::NearScreenZ;
+            CSprite2d::NearScreenZ += 0.000001f;
+            achno.Draw(80.0, 140.0, 75.0, 75.0, CRGBA(255, 255, 255, 255));
+            CSprite2d::NearScreenZ = oldZ;
         }
     }
 
@@ -89,3 +104,6 @@ struct AchievementOption
     }
 
 } mainInstance;
+
+CSprite2d AchievementOption::achno;
+CSprite2d AchievementOption::achcar;
