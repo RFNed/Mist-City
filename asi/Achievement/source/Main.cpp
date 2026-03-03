@@ -70,12 +70,23 @@ struct AchievementOption
     }
 
     void RenderAchievements() { // 1024x768
+
+        float screenW = (float)RsGlobal.maximumWidth;
+        float screenH = (float)RsGlobal.maximumHeight;
+
+        float scaleX = (float)RsGlobal.maximumWidth / 1024.0f;
+        float scaleY = (float)RsGlobal.maximumHeight / 768.0f;
+
+        float scale = std::min(scaleX, scaleY);
+
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
-            achno.Draw(200.0, 220.0, 80.0, 80.0, CRGBA(255, 255, 255, 255));
+            achno.Draw(screenW*0.195f, screenH*0.2864f, 87.0*scale, 87.0*scale, CRGBA(255, 255, 255, 255));
+            achno.Draw(screenW * 0.255f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+            achno.Draw(screenW * 0.255f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
             char buffer[50];
             sprintf_s(buffer, "%d %d", FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY);
             CFont::PrintString(300.0, 200.0, buffer);
-            cursor.Draw(FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY, 29.0, 31.0, CRGBA(255,255,255,255));
+            cursor.Draw(FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY, 29.0*scaleX, 31.0*scaleY, CRGBA(255,255,255,255));
         }
     }
 
