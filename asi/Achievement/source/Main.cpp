@@ -27,7 +27,8 @@ struct AchievementOption
     bool bInited = false;
 
     // Achievements TXD
-
+    
+    static CSprite2d cursor;
     static CSprite2d achno; // Non-exist achievement
     static CSprite2d achcar; // Achievement car
 
@@ -50,7 +51,7 @@ struct AchievementOption
                 CTxdStore::SetCurrentTxd(txd);
                 
                 
-
+                cursor.SetTexture(const_cast<char*>("mouse"));
                 achno.SetTexture(const_cast<char*>("ach_no"));
                 
                 CTxdStore::PopCurrentTxd();
@@ -68,12 +69,13 @@ struct AchievementOption
 
     }
 
-    void RenderAchievements() {
+    void RenderAchievements() { // 1024x768
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
-            float oldZ = CSprite2d::NearScreenZ;
-            CSprite2d::NearScreenZ += 0.000001f;
-            achno.Draw(80.0, 140.0, 75.0, 75.0, CRGBA(255, 255, 255, 255));
-            CSprite2d::NearScreenZ = oldZ;
+            achno.Draw(200.0, 220.0, 80.0, 80.0, CRGBA(255, 255, 255, 255));
+            char buffer[50];
+            sprintf_s(buffer, "%d %d", FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY);
+            CFont::PrintString(300.0, 200.0, buffer);
+            cursor.Draw(FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY, 29.0, 31.0, CRGBA(255,255,255,255));
         }
     }
 
@@ -106,4 +108,5 @@ struct AchievementOption
 } mainInstance;
 
 CSprite2d AchievementOption::achno;
+CSprite2d AchievementOption::cursor;
 CSprite2d AchievementOption::achcar;
