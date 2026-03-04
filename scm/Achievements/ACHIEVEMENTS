@@ -1,11 +1,20 @@
 {$USE CLEO}
-/*
 
-ACH1 -> ”гони машину
 
-*/
+:Achievements
 
-:initach
-thread 'initach'
-0aca: "hello world"
+:LoadA
+wait 0 ms
+if
+$2 == False
+then
+    if
+    00DF:   actor $PLAYER_ACTOR driving
+    then
+        $2 = True
+        0aca: "OK!!!"
+    end
+end
+jump @LoadA
+
 end_thread

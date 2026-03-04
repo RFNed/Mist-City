@@ -6,6 +6,7 @@
 #include <CFont.h>
 #include <CSprite2d.h>
 #include <CTxdStore.h>
+#include <CCamera.h>
 #define SCM_GLOBALS_BASE 0xA49960
 
 using namespace plugin;
@@ -32,7 +33,6 @@ struct AchievementOption
     static CSprite2d achno; // Non-exist achievement
     static CSprite2d achcar; // Achievement car
 
-
     //
 
     AchievementOption()
@@ -53,7 +53,7 @@ struct AchievementOption
                 
                 cursor.SetTexture(const_cast<char*>("mouse"));
                 achno.SetTexture(const_cast<char*>("ach_no"));
-                
+                achcar.SetTexture(const_cast<char*>("ach_car"));
                 CTxdStore::PopCurrentTxd();
 
 
@@ -80,12 +80,18 @@ struct AchievementOption
         float scale = std::min(scaleX, scaleY);
 
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
-            achno.Draw(screenW*0.195f, screenH*0.2864f, 87.0*scale, 87.0*scale, CRGBA(255, 255, 255, 255));
-            achno.Draw(screenW * 0.255f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
-            achno.Draw(screenW * 0.255f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+
+            int ach_car = GetSCMGlobal(2);
+            if (ach_car == 1) {
+                achcar.Draw(screenW * 0.195f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+            }
+            else {
+                achno.Draw(screenW * 0.195f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+            }
+            achno.Draw(screenW*0.305f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
             char buffer[50];
             sprintf_s(buffer, "%d %d", FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY);
-            CFont::PrintString(300.0, 200.0, buffer);
+            CFont::PrintString((float)screenW/2, screenH*0.150f, buffer);
             cursor.Draw(FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY, 29.0*scaleX, 31.0*scaleY, CRGBA(255,255,255,255));
         }
     }

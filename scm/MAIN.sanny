@@ -60,6 +60,9 @@ $PLAYER_ACTOR = Actor.EmulateFromPlayer($PLAYER_CHAR)
 0173: $PLAYER_ACTOR 94.000
 Camera.SetBehindPlayer()
 wait 0 
+
+
+
 Player.SetClothes($PLAYER_CHAR, "skullyblk", "skullycap" , 16)
 Player.SetClothes($PLAYER_CHAR, "player_face", "HEAD", Head)
 Player.SetClothes($PLAYER_CHAR, "JEANSDENIM", "JEANS", Legs)
@@ -88,12 +91,12 @@ write_memory 9067136 size 4 value 536870912 virtual_protect 0
 0173: $PLAYER_ACTOR 94.000
 fade 1 100
 wait 3000
+
+create_thread @Achievements
+
 end_thread
 
 
-
-
-
-{$INCLUDE_ONCE Features\PC} // PC
+{$INCLUDE_ONCE Achievements\ACHIEVEMENTS} // Achievements
 {$INCLUDE_ONCE Missions\Intro\INTRO} // Intro
-
+{$INCLUDE_ONCE Features\PC} // Intro
