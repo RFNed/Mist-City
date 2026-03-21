@@ -6,6 +6,12 @@
 #include <CFont.h>
 #include <CSprite2d.h>
 #include <CTxdStore.h>
+#include <iostream>
+#include <CCheat.h>
+
+#include "Functions.h"
+
+
 #define SCM_GLOBALS_BASE 0xA49960
 
 using namespace plugin;
@@ -25,7 +31,7 @@ int GetSCMGlobal(int index) {
 struct AchievementOption
 {
     bool bInited = false;
-
+    bool fInited = false;
     // Achievements TXD
     
     static CSprite2d cursor;
@@ -36,9 +42,33 @@ struct AchievementOption
 
     AchievementOption()
     {
+        Events::
+        Events::gameProcessEvent += [this]() {
+            if (!fInited) {
+                if (KeyPressed('J')) {
+                    fInited = true;
+                    Player player;
+                    char buffer[128];
+                    CVector coords = player.GetPosition();
+                    sprintf_s(buffer, "\n\n\n\n%.3f %.3f %.3f - COORDINATES!!!", coords.x, coords.y, coords.z);
+                    OutputDebugString(buffer);
+                }
+            }
+        };
         Events::initRwEvent += [this](){
             if (!bInited) {
                 bInited = true;
+
+
+                //int value = GetPrivateProfileIntA(
+                //    "Global",
+                //    "MistCityForever",
+                //    1,
+                //    ".\\config.ini"
+                //);
+                //char buffer[28];
+                //OutputDebugString(buffer);
+
                 SetupNewPage();
                 InitPage();
 
@@ -65,6 +95,10 @@ struct AchievementOption
         Events::shutdownRwEvent += [] {
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
         };
+
+    }
+
+    void MyCheat() {
 
     }
 

@@ -133,11 +133,19 @@ xcopy /Y "$(ProjectDir)source\config.ini" "$(GTA_SA_DIR)\scripts"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Realism.cpp">
+      <DeploymentContent>true</DeploymentContent>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="config.ini">
+    <None Include="source\config.ini">
       <DeploymentContent>true</DeploymentContent>
-    </Text>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\Functions.h">
+      <DeploymentContent>true</DeploymentContent>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
