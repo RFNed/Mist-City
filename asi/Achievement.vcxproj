@@ -14,8 +14,9 @@
     <ProjectGuid>{AE04F40A-1ABA-6C00-A3AE-66D70F636304}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Achievement</RootNamespace>
+    <RootNamespace>MistPlugin</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>MistPlugin</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GTA-SA|Win32'" Label="Configuration">
@@ -125,17 +126,18 @@ if defined GTA_SA_DIR (
 taskkill /IM gta_sa.exe /F /FI "STATUS eq RUNNING" 
 
 xcopy /Y "$(TargetPath)" "$(GTA_SA_DIR)\scripts" 
+xcopy /Y "$(ProjectDir)source\config.ini" "$(GTA_SA_DIR)\scripts"
 
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="functions.cpp" />
-    <ClCompile Include="Realism.cpp" />
     <ClCompile Include="source\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="functions.h" />
+    <Text Include="config.ini">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
