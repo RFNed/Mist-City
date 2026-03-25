@@ -8,13 +8,14 @@
 #include <CTxdStore.h>
 #include <iostream>
 #include <CCheat.h>
-
+#include <CKeyGen.h>
 #include "Functions.h"
 
 
 #define SCM_GLOBALS_BASE 0xA49960
 
 using namespace plugin;
+
 
 int GetSCMGlobal(int index) {
     int val = 0;
@@ -28,46 +29,31 @@ int GetSCMGlobal(int index) {
     return val;
 }
 
+
+enum cursors
+{
+    CursorPoint = 1,
+    CursorHand = 2
+};
+
 struct AchievementOption
 {
     bool bInited = false;
     bool fInited = false;
     // Achievements TXD
-    
     static CSprite2d cursor;
     static CSprite2d achno; // Non-exist achievement
     static CSprite2d achcar; // Achievement car
-
     //
-
     AchievementOption()
     {
-        Events::
+        Events::initGameEvent += [this]() {
+            };
         Events::gameProcessEvent += [this]() {
-            if (!fInited) {
-                if (KeyPressed('J')) {
-                    fInited = true;
-                    Player player;
-                    char buffer[128];
-                    CVector coords = player.GetPosition();
-                    sprintf_s(buffer, "\n\n\n\n%.3f %.3f %.3f - COORDINATES!!!", coords.x, coords.y, coords.z);
-                    OutputDebugString(buffer);
-                }
-            }
         };
         Events::initRwEvent += [this](){
             if (!bInited) {
                 bInited = true;
-
-
-                //int value = GetPrivateProfileIntA(
-                //    "Global",
-                //    "MistCityForever",
-                //    1,
-                //    ".\\config.ini"
-                //);
-                //char buffer[28];
-                //OutputDebugString(buffer);
 
                 SetupNewPage();
                 InitPage();
@@ -95,40 +81,64 @@ struct AchievementOption
         Events::shutdownRwEvent += [] {
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
         };
-
     }
+    
 
-    void MyCheat() {
+    void RenderAchievements() {
 
-    }
-
-    void RenderAchievements() { // 1024x768
+        constexpr float baseW = 1024.0f;
+        constexpr float baseH = 768.0f;
 
         float screenW = (float)RsGlobal.maximumWidth;
         float screenH = (float)RsGlobal.maximumHeight;
 
-        float scaleX = (float)RsGlobal.maximumWidth / 1024.0f;
-        float scaleY = (float)RsGlobal.maximumHeight / 768.0f;
-
-        float scale = std::min(scaleX, scaleY);
+        float scaleX = screenW / baseW;
+        float scaleY = screenH / baseH;
+        float scale = (scaleX + scaleY) / 2.0f;
 
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
 
             int ach_car = GetSCMGlobal(2);
-            if (ach_car == 1) {
-                achcar.Draw(screenW * 0.195f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+
+
+            struct SpritePos {
+                float xRel, yRel;
+                CSprite2d& sprite;
+            };
+
+            SpritePos sprites[] = {
+                {0.195f, 0.2864f, ach_car == 1 ? achcar : achno},
+                {0.305f, 0.2864f, achno}
+            };
+
+            for (auto& sp : sprites) {
+                float posX = screenW * sp.xRel;
+                float posY = screenH * sp.yRel;
+                sp.sprite.Draw(posX, posY, 87.0f * scale, 87.0f * scale, CRGBA(255, 255, 255, 255));
             }
-            else {
-                achno.Draw(screenW * 0.195f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+
+            float hoverX = screenW * 0.195f;
+            float hoverY = screenH * 0.2864f;
+            float spriteSize = 87.0f * scale;
+
+            if (FrontEndMenuManager.m_nMousePosX > hoverX &&
+                FrontEndMenuManager.m_nMousePosX < hoverX + spriteSize &&
+                FrontEndMenuManager.m_nMousePosY > hoverY &&
+                FrontEndMenuManager.m_nMousePosY < hoverY + spriteSize)
+            {
+                CFont::PrintString(screenW * 0.73f, screenH * 0.70f, "achievement");
             }
-            achno.Draw(screenW*0.305f, screenH * 0.2864f, 87.0 * scale, 87.0 * scale, CRGBA(255, 255, 255, 255));
+
             char buffer[50];
             sprintf_s(buffer, "%d %d", FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY);
-            CFont::PrintString((float)screenW/2, screenH*0.150f, buffer);
-            cursor.Draw(FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY, 29.0*scaleX, 31.0*scaleY, CRGBA(255,255,255,255));
+            CFont::PrintString(screenW * 0.5f, screenH * 0.15f, buffer);
+
+            cursor.Draw((float)FrontEndMenuManager.m_nMousePosX,
+                (float)FrontEndMenuManager.m_nMousePosY,
+                29.0f * scaleX, 31.0f * scaleY,
+                CRGBA(255, 255, 255, 255));
         }
     }
-
     void SetupNewPage() {
         CMenuScreen* ac_page = &aScreens[MENUPAGE_BRIEFS];
         memset(ac_page, 0, sizeof(CMenuScreen));
