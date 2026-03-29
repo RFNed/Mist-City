@@ -7,10 +7,7 @@
 #include <CSprite2d.h>
 #include <CTxdStore.h>
 #include <iostream>
-#include <CCheat.h>
-#include <CKeyGen.h>
 #include "Functions.h"
-
 
 #define SCM_GLOBALS_BASE 0xA49960
 
@@ -29,25 +26,28 @@ int GetSCMGlobal(int index) {
     return val;
 }
 
-
 enum cursors
 {
-    CursorPoint = 1,
-    CursorHand = 2
+    CursorPoint = 4,
+    CursorHand = 5
 };
 
 struct AchievementOption
 {
     bool bInited = false;
     bool fInited = false;
-    // Achievements TXD
-    static CSprite2d cursor;
+
+    int currentCursor;
+    
+    static CSprite2d cursor_point;
+	static CSprite2d cursor_hand;
     static CSprite2d achno; // Non-exist achievement
     static CSprite2d achcar; // Achievement car
-    //
+    
     AchievementOption()
     {
         Events::initGameEvent += [this]() {
+
             };
         Events::gameProcessEvent += [this]() {
         };
@@ -66,7 +66,8 @@ struct AchievementOption
                 CTxdStore::SetCurrentTxd(txd);
                 
                 
-                cursor.SetTexture(const_cast<char*>("mouse"));
+                cursor_point.SetTexture(const_cast<char*>("mouse"));
+				cursor_hand.SetTexture(const_cast<char*>("hand"));
                 achno.SetTexture(const_cast<char*>("ach_no"));
                 achcar.SetTexture(const_cast<char*>("ach_car"));
                 CTxdStore::PopCurrentTxd();
@@ -82,63 +83,93 @@ struct AchievementOption
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
         };
     }
-    
 
     void RenderAchievements() {
-
+        ShowCursor(TRUE);
         constexpr float baseW = 1024.0f;
         constexpr float baseH = 768.0f;
-
+        
         float screenW = (float)RsGlobal.maximumWidth;
         float screenH = (float)RsGlobal.maximumHeight;
 
         float scaleX = screenW / baseW;
         float scaleY = screenH / baseH;
         float scale = (scaleX + scaleY) / 2.0f;
-
+        float fontScale = std::min(scaleX, scaleY);
+        currentCursor = CursorPoint;
         if (FrontEndMenuManager.m_nCurrentMenuPage == MENUPAGE_BRIEFS) {
 
-            int ach_car = GetSCMGlobal(2);
+            
 
 
             struct SpritePos {
+                int scmIndex;
                 float xRel, yRel;
-                CSprite2d& sprite;
+                CSprite2d& spriteYes;
+                CSprite2d& spriteNo;
+                char desc[50];
             };
 
             SpritePos sprites[] = {
-                {0.195f, 0.2864f, ach_car == 1 ? achcar : achno},
-                {0.305f, 0.2864f, achno}
+                {2, 0.195f, 0.2864f, achcar, achno, "Y™o®œ ¯a¥œ®y!~n~“¦o ¢ecežo!"},
+                {3, 0.305f, 0.2864f, achcar, achno, "Achievement 2"}
             };
 
             for (auto& sp : sprites) {
+                
+                int value = GetSCMGlobal(sp.scmIndex);
+
+                CSprite2d& spriteToDraw = (value == 1) ? sp.spriteYes : sp.spriteNo;
+
                 float posX = screenW * sp.xRel;
                 float posY = screenH * sp.yRel;
-                sp.sprite.Draw(posX, posY, 87.0f * scale, 87.0f * scale, CRGBA(255, 255, 255, 255));
+                spriteToDraw.Draw(posX, posY, 87.0f * scale, 87.0f * scale, CRGBA(255, 255, 255, 255));
+                float hoverX = screenW * sp.xRel;
+                float hoverY = screenH * sp.yRel;
+                float spriteSize = 87.0f * scale;
+                if (
+                    (FrontEndMenuManager.m_nMousePosX > hoverX &&
+                    FrontEndMenuManager.m_nMousePosX < hoverX + spriteSize &&
+                    FrontEndMenuManager.m_nMousePosY > hoverY &&
+                    FrontEndMenuManager.m_nMousePosY < hoverY + spriteSize)
+                    
+                    )
+                {
+                    currentCursor = CursorHand;
+                    if (value == 0) {
+                        CFont::SetFontStyle(FONT_SUBTITLES);
+                        CFont::SetScale(0.8f * scaleX, 1.3f * scaleY);
+                        CFont::PrintString(screenW * 0.58f, screenH * 0.75f, sp.desc);
+                    }
+                }
             }
 
-            float hoverX = screenW * 0.195f;
-            float hoverY = screenH * 0.2864f;
-            float spriteSize = 87.0f * scale;
 
-            if (FrontEndMenuManager.m_nMousePosX > hoverX &&
-                FrontEndMenuManager.m_nMousePosX < hoverX + spriteSize &&
-                FrontEndMenuManager.m_nMousePosY > hoverY &&
-                FrontEndMenuManager.m_nMousePosY < hoverY + spriteSize)
-            {
-                CFont::PrintString(screenW * 0.73f, screenH * 0.70f, "achievement");
-            }
+
+
 
             char buffer[50];
             sprintf_s(buffer, "%d %d", FrontEndMenuManager.m_nMousePosX, FrontEndMenuManager.m_nMousePosY);
+            CFont::SetScale(0.9f * fontScale, 0.9f * fontScale);
             CFont::PrintString(screenW * 0.5f, screenH * 0.15f, buffer);
 
-            cursor.Draw((float)FrontEndMenuManager.m_nMousePosX,
-                (float)FrontEndMenuManager.m_nMousePosY,
-                29.0f * scaleX, 31.0f * scaleY,
-                CRGBA(255, 255, 255, 255));
+            if (currentCursor == CursorPoint) {
+                cursor_point.Draw((float)FrontEndMenuManager.m_nMousePosX,
+                    (float)FrontEndMenuManager.m_nMousePosY,
+                    29.0f * scaleX, 31.0f * scaleY,
+                    CRGBA(255, 255, 255, 255));
+            }
+            else if (currentCursor == CursorHand) {
+                ShowCursor(FALSE);
+                cursor_hand.Draw((float)FrontEndMenuManager.m_nMousePosX,
+                    (float)FrontEndMenuManager.m_nMousePosY,
+                    29.0f * scaleX, 31.0f * scaleY,
+                    CRGBA(255, 255, 255, 255));
+            }
+
         }
     }
+
     void SetupNewPage() {
         CMenuScreen* ac_page = &aScreens[MENUPAGE_BRIEFS];
         memset(ac_page, 0, sizeof(CMenuScreen));
@@ -168,5 +199,6 @@ struct AchievementOption
 } mainInstance;
 
 CSprite2d AchievementOption::achno;
-CSprite2d AchievementOption::cursor;
+CSprite2d AchievementOption::cursor_point;
+CSprite2d AchievementOption::cursor_hand;
 CSprite2d AchievementOption::achcar;

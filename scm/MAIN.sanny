@@ -25,6 +25,8 @@ const // Missions
     INTRO = 0
 end
 
+0004: $2 = 0
+0004: $3 = 0
 
 09B9: show_entered_car_name 0
 09BA: show_entered_zone_name 0
@@ -60,8 +62,6 @@ $PLAYER_ACTOR = Actor.EmulateFromPlayer($PLAYER_CHAR)
 0173: $PLAYER_ACTOR 94.000
 Camera.SetBehindPlayer()
 wait 0 
-
-
 
 Player.SetClothes($PLAYER_CHAR, "skullyblk", "skullycap" , 16)
 Player.SetClothes($PLAYER_CHAR, "player_face", "HEAD", Head)

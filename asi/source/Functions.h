@@ -1,10 +1,19 @@
 #include <iostream>
 #include "CVector.h"
-struct CPed;
+#include <map>;
+#include <CPed.h>;
 
-class Player {
+
+class RealismPlayer {
 private:
-	DWORD playerDataAddr = 0xB7CD98;
+	struct PlayerBones {
+		float head;
+	};
+
+	PlayerBones bones;
+
 public:
-	CVector GetPosition();
+
+	void HurtBone();
+	PlayerBones& GetBones() { return bones; }
 };

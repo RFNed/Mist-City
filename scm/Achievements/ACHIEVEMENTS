@@ -12,6 +12,7 @@ then
     00DF:   actor $PLAYER_ACTOR driving
     then
         $2 = True
+        $3 = True
         0aca: "OK!!!"
     end
 end
