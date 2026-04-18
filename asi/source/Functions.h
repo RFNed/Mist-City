@@ -9,12 +9,12 @@
 class RlPlayer {
 
 private:
-	std::string name;
 	float health;
+	float armour;
 	CPed* ped;
 public:
-	RlPlayer(std::string TypeName = "Default", float Health = 100.0f, CPed* ped = nullptr) : name(TypeName), health(Health), ped(ped) {}
+	RlPlayer(float Health = 100.0f, CPed* ped = nullptr) : health(Health), ped(ped) {}
 	float GetHealth();
 	void takePlayerData();
-	std::string GetName();
+	void ProcessHealthAffect();
 };

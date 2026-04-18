@@ -53,10 +53,7 @@ struct AchievementOption
             
         };
         Events::gameProcessEvent += [this]() {
-            
-            char buffer[54];
-            sprintf_s(buffer, "%.4f", playerRl.GetHealth());
-            OutputDebugStringA(buffer);
+            playerRl.ProcessHealthAffect();
         };
         Events::initRwEvent += [this](){
             if (!bInited) {
@@ -89,13 +86,6 @@ struct AchievementOption
         Events::shutdownRwEvent += [] {
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
         };
-    }
-
-    void GetDamage(CPed* ped, int boneId, float damage)
-    {
-        char buffer[50];
-        sprintf_s(buffer, "%p %d %.2f\n", ped, boneId, damage);
-        OutputDebugStringA(buffer);
     }
 
     void RenderAchievements() {
