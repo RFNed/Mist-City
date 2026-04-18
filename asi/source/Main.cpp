@@ -8,7 +8,9 @@
 #include <CTxdStore.h>
 #include <iostream>
 #include "Functions.h"
-
+#include <CPedDamageResponse.h>
+#include <CPedModelInfo.h>
+#include <CDamageManager.h>
 #define SCM_GLOBALS_BASE 0xA49960
 
 using namespace plugin;
@@ -37,19 +39,24 @@ struct AchievementOption
     bool bInited = false;
     bool fInited = false;
 
-    int currentCursor;
-    
-    static CSprite2d cursor_point;
-	static CSprite2d cursor_hand;
+    int currentCursor = CursorPoint;
+    RlPlayer player = RlPlayer();
+    static CSprite2d cursor_point; // CursorPoint
+	static CSprite2d cursor_hand; // CursorHand
     static CSprite2d achno; // Non-exist achievement
     static CSprite2d achcar; // Achievement car
-    
+    RlPlayer playerRl = RlPlayer();
     AchievementOption()
     {
         Events::initGameEvent += [this]() {
-
-            };
+            playerRl.takePlayerData();
+            
+        };
         Events::gameProcessEvent += [this]() {
+            
+            char buffer[54];
+            sprintf_s(buffer, "%.4f", playerRl.GetHealth());
+            OutputDebugStringA(buffer);
         };
         Events::initRwEvent += [this](){
             if (!bInited) {
@@ -82,6 +89,13 @@ struct AchievementOption
         Events::shutdownRwEvent += [] {
             CTxdStore::RemoveTxdSlot(CTxdStore::FindTxdSlot("ach_txd"));
         };
+    }
+
+    void GetDamage(CPed* ped, int boneId, float damage)
+    {
+        char buffer[50];
+        sprintf_s(buffer, "%p %d %.2f\n", ped, boneId, damage);
+        OutputDebugStringA(buffer);
     }
 
     void RenderAchievements() {

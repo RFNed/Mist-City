@@ -1,19 +1,20 @@
 #include <iostream>
 #include "CVector.h"
-#include <map>;
-#include <CPed.h>;
+#include <map>
+#include <CPed.h>
+#include <string>
 
 
-class RealismPlayer {
+
+class RlPlayer {
+
 private:
-	struct PlayerBones {
-		float head;
-	};
-
-	PlayerBones bones;
-
+	std::string name;
+	float health;
+	CPed* ped;
 public:
-
-	void HurtBone();
-	PlayerBones& GetBones() { return bones; }
+	RlPlayer(std::string TypeName = "Default", float Health = 100.0f, CPed* ped = nullptr) : name(TypeName), health(Health), ped(ped) {}
+	float GetHealth();
+	void takePlayerData();
+	std::string GetName();
 };
